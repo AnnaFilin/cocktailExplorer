@@ -1,0 +1,26 @@
+/* 
+  Localizable.strings
+  CocktailExplorer
+
+  Created by Anna Filin on 20/06/2025.
+  
+*/
+"Favorites" = "Favorites";
+"The drinks you loved the most." = "The drinks you loved the most.";
+"You haven't added any favorites yet." = "You haven't added any favorites yet.";
+"Ingredients you use the most." = "Ingredients you use the most.";
+"%@ drinks" = "%@ drinks";
+"Loading ingredients..." = "Loading ingredients...";
+"Selected Ingredients" = "Selected Ingredients";
+"Reset All" = "Reset All";
+"A Curious Pour" = "A Curious Pour";
+"Search..." = "Search...";
+"Search for a drink..." = "Search for a drink...";
+"Drinks with this ingredient" = "Drinks with this ingredient";
+"Mix by ingredients" = "Mix by ingredients";
+"Instructions" = "Instructions";
+"Glass" = "Glass";
+"Category" = "Category";
+"Alcoholic" = "Alcoholic";
+"No drinks found" = "No drinks found";
+"Try another search" = "Try another search";
