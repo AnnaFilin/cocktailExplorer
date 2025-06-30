@@ -29,7 +29,8 @@ struct CategoryMenuToggleView: View {
                         }
                     }
                     .transition(.move(edge: .bottom))
-                    .padding(.bottom, 16)
+                    .offset(y: -ThemeSpacing.medium)
+                    .padding(.bottom, ThemeSpacing.large)
                 } else {
                     PeekingMenuCorner()
                         .onTapGesture {
@@ -37,10 +38,11 @@ struct CategoryMenuToggleView: View {
                                 showCategoryMenu = true
                             }
                         }
-                        .padding(.bottom, 12)
+                        .padding(.bottom, ThemeSpacing.medium)
+
                         .opacity(0.9)
                         .shadow(color: .black.opacity(0.3), radius: 4, x: 0, y: -1)
-                        .offset(y: 28)
+                        .offset(y: ThemeSpacing.outerPadding)
                 }
             }
         }

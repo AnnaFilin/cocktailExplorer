@@ -10,25 +10,27 @@ import SwiftUI
 struct DrinkListItemView: View {
     let drink: Drink
     var isDarkBackground: Bool = false
-
+    
     var body: some View {
-        HStack(alignment: .center){
+        HStack(alignment: .center, spacing: ThemeSpacing.elementSpacing){
             AsyncImage(url: URL(string: drink.thumbnail)) { phase in
                 if let image = phase.image {
                     image
                         .resizable()
                         .scaledToFit()
-                        .frame(width: 70, height: 70)
-                        .clipShape(RoundedRectangle(cornerRadius: 10))
-                        .padding(.trailing, 12)
+                        .frame(width: ThemeSize.drinkImageSize, height: ThemeSize.drinkImageSize)
+                        .clipShape(RoundedRectangle(cornerRadius: ThemeSpacing.cornerRadiusSmall))
+                } else {
+                    Color.gray
+                        .frame(width: ThemeSize.drinkImageSize, height: ThemeSize.drinkImageSize)
+                        .clipShape(RoundedRectangle(cornerRadius: ThemeSpacing.cornerRadiusSmall))
                 }
             }
-            .frame(width: 70, height: 70)
             
             VStack(alignment: .leading) {
-                
                 Text(drink.name)
-                    .font(ThemeFont.listTitle)
+                    .font(ThemeFont.body)
+                    .opacity(0.9)
                     .foregroundStyle(isDarkBackground ? .backgroundLight : .backgroundDark)
                     .multilineTextAlignment(.leading)
                     .lineLimit(2)
@@ -37,19 +39,18 @@ struct DrinkListItemView: View {
             
             Spacer()
             
-            
             FavoritesButtonView(drinkId: drink.id)
-                .font(.system(size: 18))
-                .foregroundStyle(isDarkBackground ? .backgroundLight : .backgroundDark.opacity(0.7))
+                .font(ThemeFont.favoriteIcon)
+                .foregroundStyle(isDarkBackground ? .backgroundLight.opacity(0.7) : .backgroundDark.opacity(0.7))
+                .padding(.trailing, ThemeSpacing.small)
         }
-        .frame(maxHeight: .infinity, alignment: .center)
-        .padding(.vertical, 8)
-        .padding(.horizontal, 16)
+        .padding(.vertical, ThemeSpacing.compact)
+        
     }
 }
 
 #Preview {
     DrinkListItemView(drink: Drink.example)
         .environmentObject(DrinksViewModel.preview)
-
+    
 }

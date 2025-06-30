@@ -37,7 +37,7 @@ enum AlcoholFilterOption: String, CaseIterable, Equatable {
         var body: some View {
             let options = AlcoholFilterOption.allCases
 
-            HStack(spacing: 8) {
+            HStack(spacing: ThemeSpacing.small) { 
                 ForEach(options, id: \.self) { option in
                     let isSelected = selectedAlcoholFilter == option
                     let textColor: Color = isSelected ? .backgroundDark : .backgroundLight
@@ -46,19 +46,20 @@ enum AlcoholFilterOption: String, CaseIterable, Equatable {
                     let borderWidth: CGFloat = isSelected ? 0 : 0.5
 
                     Text(option.title)
-                        .font(ThemeFont.drinkDescription)
+                        .font(ThemeFont.pillButton)
                         .foregroundColor(textColor)
-                        .padding(.vertical, 6)
-                        .padding(.horizontal, 12)
+                        .padding(.vertical, ThemeSpacing.small)
+                        .padding(.horizontal, ThemeSpacing.medium)
                         .background(
                             Capsule()
-                                .fill(fillColor)
-                                .shadow(color: shadowColor, radius: 1, x: 0, y: 1)
-                        )
-                        .overlay(
+                              .fill(fillColor)
+                              .shadow(color: shadowColor, radius: 1, x: 0, y: 1)
+                          )
+                          .overlay(
                             Capsule()
-                                .stroke(Color.backgroundLight.opacity(0.2), lineWidth: borderWidth)
-                        )
+                              .stroke(.backgroundLight.opacity(0.2), lineWidth: borderWidth)
+                          )
+
                         .onTapGesture {
                             withAnimation(.easeInOut(duration: 0.2)) {
                                 selectedAlcoholFilter = option
@@ -66,11 +67,10 @@ enum AlcoholFilterOption: String, CaseIterable, Equatable {
                         }
                 }
             }
-            .padding(.top, 12)
+            .padding(.top, ThemeSpacing.medium) 
         }
     }
 
-//}
 
 #Preview {
     AlcoholFilterSelector(selectedAlcoholFilter: .constant(.alcoholic))

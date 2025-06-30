@@ -9,6 +9,8 @@ import Foundation
 
 @MainActor
 class IngredientFilterViewModel: ObservableObject {
+    private let ingredientsService: CocktailServiceProtocol
+    
     @Published var ingredients: [BasicIngredient] = []
     @Published var selectedIngredients: Set<BasicIngredient> = []
     
@@ -21,9 +23,11 @@ class IngredientFilterViewModel: ObservableObject {
     
     @Published var searchText = ""
     
-    private let ingredientsService: CocktailServiceProtocol = CocktailService()
-    
     var hasLoadedIngredients = false
+    
+    init(service: CocktailServiceProtocol) {
+        self.ingredientsService = service
+    }
     
     var filteredIngredients: [BasicIngredient] {
         if searchText.isEmpty { return [] }
@@ -36,9 +40,7 @@ class IngredientFilterViewModel: ObservableObject {
         }
     }
     
-    
     func loadIngredients() async {
-        
         guard !hasLoadedIngredients else { return }
         hasLoadedIngredients = true
         
@@ -50,7 +52,6 @@ class IngredientFilterViewModel: ObservableObject {
             errorMessage = error.localizedDescription
         }
         isLoading = false
-        
     }
     
     func containsIngredient(_ ingredient: BasicIngredient) -> Bool {
@@ -84,8 +85,6 @@ class IngredientFilterViewModel: ObservableObject {
         let intersected = drinksByIngredient.reduce(drinksByIngredient.first ?? []) { result, next in
             
             result.filter { drink in
-                
-                
                 next.contains(where: { $0.id == drink.id })
             }
         }
@@ -93,15 +92,18 @@ class IngredientFilterViewModel: ObservableObject {
         self.filteredDrinks = intersected
         
         isLoading = false
-        
     }
     
+    func resetAll() async {
+        selectedIngredients.removeAll()
+        searchText = ""
+        filteredDrinks = []
+    }
     
     func loadDrinksByIngredient(ingredient: String) async -> [Drink] {
         isLoading = true
         
         if let cached = allDrinksCache[ingredient] {
-            
             isLoading = false
             return cached
         }
@@ -117,5 +119,16 @@ class IngredientFilterViewModel: ObservableObject {
             return []
         }
         
+    }
+}
+
+extension IngredientFilterViewModel {
+    static var preview: IngredientFilterViewModel {
+        let vm = IngredientFilterViewModel(service: CocktailService())
+        vm.ingredients = [
+            BasicIngredient(name: "Rum"),
+            BasicIngredient(name: "Gin")
+        ]
+        return vm
     }
 }

@@ -33,9 +33,7 @@ struct TabBarBackgroundView: View {
                Spacer()
                
            }
-         
-           .padding(.top, 12)
-
+           .padding(.top, ThemeSpacing.tabBarIconTopPadding)
            .background(
                backgroundColor.opacity(0.6)
            )

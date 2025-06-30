@@ -37,6 +37,6 @@ struct DrinkCardView111: View {
     }
 }
 
-#Preview {
-    DrinkCardView(drink: .example)
-}
+//#Preview {
+//    DrinkCardView(drink: .example)
+//}

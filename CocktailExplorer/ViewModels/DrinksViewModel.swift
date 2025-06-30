@@ -4,6 +4,8 @@
 //
 //  Created by Anna Filin on 02/06/2025.
 //
+// TODO: Enable Favorites toggle filter later if needed
+// TODO: Implement alcohol filter for Random screen when Drink includes alcohol data
 
 import Foundation
 import Combine
@@ -11,12 +13,12 @@ import Combine
 
 @MainActor
 class DrinksViewModel: ObservableObject {
+    private let drinksService: CocktailServiceProtocol
     @Published var favoriteDrinkIDs: Set<String> = []
     
     private let key = "FavoriteDrinks"
     private var cancellables = Set<AnyCancellable>()
 
-    
     @Published var drinks: [Drink] = []
     @Published var searchResults: [DrinkDetail] = []
     @Published var categoryResults: [Drink] = []
@@ -31,16 +33,10 @@ class DrinksViewModel: ObservableObject {
     @Published var currentDrink: DrinkDetail? = nil
     @Published var randomDrink: DrinkDetail? = nil
     
-    @Published var showOnlyFavorites: Bool = false
+//    @Published var showOnlyFavorites: Bool = false
 
     @Published var searchText: String = ""
-//    @Published var selectedCategory: String = "" {
-//        didSet {
-//            Task {
-//                await pickRandomDrink(from: selectedCategory)
-//            }
-//        }
-//    }
+
     @Published var selectedCategory: String? = nil {
         didSet {
             Task {
@@ -51,16 +47,14 @@ class DrinksViewModel: ObservableObject {
         }
     }
 
-    
-    @Published var selectedAlcoholFilter: AlcoholFilterOption? = nil
+//    @Published var selectedAlcoholFilter: AlcoholFilterOption? = nil
 
     @Published var filteredDrinks: [Drink] = []
-    
-    private let drinksService: CocktailServiceProtocol = CocktailService()
-    
+        
     var hasLoadedDrinks = false
     
-    init() {
+    init(service: CocktailServiceProtocol) {
+        self.drinksService = service
         loadFavorites()
         setupBindings()
     }
@@ -71,36 +65,45 @@ class DrinksViewModel: ObservableObject {
             .removeDuplicates()
             .sink { [weak self] query in
                 guard let self = self else {return}
-                Task {
-                    await self.loadDrinks(query: query)
-                }
+                if query.isEmpty {
+                      self.searchResults = []
+                      self.updateFilteredDrinks()
+                    } else {
+                      Task {
+                        await self.loadDrinks(query: query)
+                      }
+                    }
             }
             .store(in: &cancellables)
+        
+//        $showOnlyFavorites
+//          .sink { [weak self] _ in
+//            self?.updateFilteredDrinks()
+//          }
+//          .store(in: &cancellables)
     }
     
     private func convertToPreview(_ details: [DrinkDetail]) -> [Drink] {
         return details.map{ Drink(id: $0.id, name: $0.name, thumbnail: $0.thumbnail)}
     }
-
-    
     func updateFilteredDrinks() {
         let trimmedSearch = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
 
-        let base: [Drink] = trimmedSearch.isEmpty
-            ? drinks
-            : convertToPreview(searchResults)
-        
-        if showOnlyFavorites {
-            filteredDrinks = base.filter { favoriteDrinkIDs.contains($0.id) }
-        } else if trimmedSearch.isEmpty {
-            filteredDrinks = base 
-        } else {
-            filteredDrinks = base.filter {
+        var base: [Drink] = drinks
+
+        if !trimmedSearch.isEmpty {
+            base = convertToPreview(searchResults)
+            base = base.filter {
                 $0.name.lowercased().contains(trimmedSearch.lowercased())
             }
         }
+
+//        if showOnlyFavorites {
+//            base = base.filter { favoriteDrinkIDs.contains($0.id) }
+//        }
+        filteredDrinks = base
     }
-     
+
     func startLoadingDrinks() async {
         guard !hasLoadedDrinks else { return }
         hasLoadedDrinks = true
@@ -133,6 +136,7 @@ class DrinksViewModel: ObservableObject {
          do {
              searchResults = try await drinksService.fetchCocktailByName(query: query)
              searchErrorMessage = nil
+             updateFilteredDrinks()
          } catch {
              searchErrorMessage = error.localizedDescription
          }
@@ -151,11 +155,15 @@ class DrinksViewModel: ObservableObject {
     }
     
     func pickRandomDrink(from category: String) async {
+        isLoading = true
         await loadDrinksByCategory(query: category)
-        
-        guard !categoryResults.isEmpty else { return }
+
+        guard !categoryResults.isEmpty else {
+            isLoading = false
+            return
+        }
         let random = categoryResults.randomElement()
-        
+
         do {
             if let id = random?.id {
                 randomDrink = try await drinksService.fetchCocktailById(drinkId: id)
@@ -164,9 +172,9 @@ class DrinksViewModel: ObservableObject {
         } catch {
             currentErrorMessage = error.localizedDescription
         }
-                 isLoading = false
-
+        isLoading = false
     }
+
 
     
     func loadRandomDrink() async {
@@ -215,7 +223,7 @@ class DrinksViewModel: ObservableObject {
 
 extension DrinksViewModel {
     static var preview: DrinksViewModel {
-        let vm = DrinksViewModel()
+        let vm = DrinksViewModel(service: CocktailService())
         vm.drinks = Drink.allDrinks
         vm.currentDrink = DrinkDetail.example
         vm.randomDrink = DrinkDetail.example

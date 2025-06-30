@@ -61,11 +61,15 @@ struct FlexibleView<Data: Collection, Content: View>: View where Data.Element: H
         var currentRowWidth: CGFloat = 0
 
         let screenWidth = UIScreen.main.bounds.width - 32
+           let font = UIFont.systemFont(ofSize: 16)
+
+           let horizontalPadding: CGFloat = ThemeSpacing.elementSpacing * 0.75
+
 
         for item in data {
             let label = itemLabel(item)
-            let itemWidth = label.widthOfString(usingFont: UIFont.systemFont(ofSize: 16)) + 32
-
+            let itemWidth = label.widthOfString(usingFont: font) + horizontalPadding * 2
+            
             if currentRowWidth + itemWidth > screenWidth {
                 rows.append([item])
                 currentRowWidth = itemWidth

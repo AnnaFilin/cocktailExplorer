@@ -9,10 +9,11 @@ import Foundation
 
 @MainActor
 class FavoriteDrinksViewModel: ObservableObject {
-
+    private let drinkService: CocktailServiceProtocol
+    
     @Published var favoriteDrinks: [DrinkDetail] = []
     @Published var selectedIngredient: String? = nil
-
+    
     @Published var isLoading: Bool = false
     @Published var errorMessage: String? = nil
     @Published var ingredientFrequency: [String: Int] = [:]
@@ -21,15 +22,14 @@ class FavoriteDrinksViewModel: ObservableObject {
     
     private let key = "FavoriteDrinksDetails"
     
-    private var drinkService: CocktailServiceProtocol = CocktailService()
-    
-    init(initialIDs: Set<String> = []) {
+    init(service: CocktailServiceProtocol, initialIDs: Set<String> = []) {
+        self.drinkService = service
         self.initialIDs = initialIDs
         Task {
             await self.setupFavorites()
         }
     }
-
+    
     func recalculateIngredientFrequency() {
         ingredientFrequency = [:]
         for drink in favoriteDrinks {
@@ -48,45 +48,39 @@ class FavoriteDrinksViewModel: ObservableObject {
                 } else if let count = ingredientFrequency[ingredient.name] {
                     ingredientFrequency[ingredient.name] = count - 1
                 }
-
             }
-
         }
     }
     
     func setupFavorites() async {
-       
+        
         self.loadFavoriteDrinks()
-
+        
         if self.favoriteDrinks.isEmpty && !initialIDs.isEmpty {
             await initializeFromIDs(initialIDs)
             save() 
         }
     }
-
-
+    
     func initializeFromIDs(_ ids: Set<String>) async {
         var loadedDrinks: [DrinkDetail] = []
         
         do {
             for id in ids {
-                 let drink = try await drinkService.fetchCocktailById(drinkId: id)
+                let drink = try await drinkService.fetchCocktailById(drinkId: id)
                 loadedDrinks.removeAll { $0.id == drink.id }
-                   loadedDrinks.append(drink)
+                loadedDrinks.append(drink)
             }
-            
-            
         } catch {
             errorMessage = error.localizedDescription
         }
         
-
         await MainActor.run {
             self.favoriteDrinks = loadedDrinks
         }
         recalculateIngredientFrequency()
     }
-
+    
     
     private func loadFavoriteDrinks() {
         if let savedItems = UserDefaults.standard.data(forKey: key) {
@@ -96,7 +90,6 @@ class FavoriteDrinksViewModel: ObservableObject {
                 return
             }
         }
-        
         favoriteDrinks = []
     }
     
@@ -121,5 +114,11 @@ class FavoriteDrinksViewModel: ObservableObject {
         if let encoded = try? JSONEncoder().encode(favoriteDrinks) {
             UserDefaults.standard.set(encoded, forKey: key)
         }
+    }
+}
+
+extension FavoriteDrinksViewModel {
+    static var preview: FavoriteDrinksViewModel {
+        FavoriteDrinksViewModel(service: CocktailService())
     }
 }

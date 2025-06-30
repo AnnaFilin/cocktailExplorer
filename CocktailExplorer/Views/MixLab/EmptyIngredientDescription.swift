@@ -19,10 +19,10 @@ struct EmptyIngredientDescription: View {
                 image
                     .resizable()
                     .aspectRatio(contentMode: .fill)
-                               .frame(width: 200, height: 400)
+//                               .frame(width: 200, height: 400)
                                .clipped()
                                .blur(radius: 2)
-                    .cornerRadius(12)
+//                    .cornerRadius(12)
                     .opacity(0.3)
                     .frame(maxWidth: .infinity)
             } placeholder: {
@@ -41,7 +41,7 @@ struct EmptyIngredientDescription: View {
                 
             }
             .multilineTextAlignment(.center)
-                       .padding(.horizontal, 16)
+//                       .padding(.horizontal, 16)
                        .opacity(showHint ? 0.7 : 0)
                        .offset(y: showHint ? 0 : 20)
                        .animation(.easeOut(duration: 1.2), value: showHint)

@@ -5,6 +5,7 @@
 //  Created by Anna Filin on 19/06/2025.
 //
 
+// TODO: unify opacity for all ingredient chips in Favorites carousel
 import SwiftUI
 
 struct FavoritesMiniScrollView: View {
@@ -12,15 +13,12 @@ struct FavoritesMiniScrollView: View {
     @Binding var selectedIngredientName: IdentifiableString?
 
     var body: some View {
-   
         ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 6) {
+            HStack() {
                 ForEach(Array(favoritsViewModel.ingredientFrequency.keys.sorted()), id: \.self) { ingredientName in
                     IngredientMiniCardView(selectedIngredientName: $selectedIngredientName, ingredientName: ingredientName)
-                        .frame(width: 110, height: 130)
                 }
             }
-            .padding(.horizontal, ThemeSpacing.horizontal)
         }
     }
 }
@@ -28,5 +26,5 @@ struct FavoritesMiniScrollView: View {
 
 #Preview {
     FavoritesMiniScrollView(selectedIngredientName:  .constant(IdentifiableString(id: "Tequila")))
-        .environmentObject(FavoriteDrinksViewModel())
+        .environmentObject(FavoriteDrinksViewModel(service: CocktailService()))
 }

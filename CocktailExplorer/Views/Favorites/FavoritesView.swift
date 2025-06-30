@@ -14,47 +14,36 @@ struct FavoritesView: View {
     
     @Binding var backgroundColor: Color
     @State private var selectedIngredientName: IdentifiableString? = nil
-    
-    
+
     var body: some View {
         NavigationStack {
-            ZStack {
-                backgroundColor
-                    .ignoresSafeArea()
+            BaseView(backgroundColor: backgroundColor) {
+                SectionHeaderView(title: "Favorites", subtitle: "The drinks you loved the most.", alignment: .center)
+                    .padding(.top, ThemeSpacing.sectionTop)
                 
                 ScrollView {
-                    VStack(alignment: .leading, spacing: 6) {
-                       
-                        VStack {
-                            SectionHeaderView(title: "Favorites", subtitle: "The drinks you loved the most.", alignment: .center)
-                        }
-                        .padding(.top, ThemeSpacing.sectionTop)
-
-                        
+                    VStack(alignment: .leading, spacing:  ThemeSpacing.elementSpacing) { 
+  
                         if favoritsViewModel.favoriteDrinks.isEmpty {
                             Text("You haven't added any favorites yet.")
-                                .padding()
-                            
                         } else {
                             FavoritesCarouselView()
                                 .environmentObject(favoritsViewModel)
                             
                             Text("Ingredients you use the most.")
-                                .font(ThemeFont.sectionLabel)
+                                .font(ThemeFont.sectionHeader)
                                 .lineLimit(2)
                                 .multilineTextAlignment(.center)
                                 .foregroundStyle(.backgroundLight.opacity(0.8))
-                                .padding(.vertical, 6)
-                                .padding(.horizontal, ThemeSpacing.horizontal)
                                 .frame(maxWidth: .infinity, alignment: .center)
-                            
+                                .padding(.top, ThemeSpacing.medium)
+
                             FavoritesMiniScrollView(selectedIngredientName: $selectedIngredientName)
+                                .padding(.top, ThemeSpacing.small)
                                 .environmentObject(favoritsViewModel)
                         }
                     }
-                    .padding(.top, 10)
                     .foregroundStyle(.backgroundLight)
-                    
                 }
             }
             .navigationDestination(for: String.self) { id in
@@ -71,20 +60,20 @@ struct FavoritesView: View {
                 backgroundColor = .backgroundDark
             }
             Task {
-                  await favoritsViewModel.initializeFromIDs(drinksViewModel.favoriteDrinkIDs)
-              }
+                await favoritsViewModel.initializeFromIDs(drinksViewModel.favoriteDrinkIDs)
+            }
         }
     }
 }
 
 #Preview {
     let previewDrinksVM = DrinksViewModel.preview
-       let previewFavoritesVM = FavoriteDrinksViewModel()
-
+    let previewFavoritesVM = FavoriteDrinksViewModel(service: CocktailService())
+    
     FavoritesView(
-           backgroundColor: .constant(.backgroundDark)
-       )
-       .environmentObject(previewDrinksVM)
-       .environmentObject(previewFavoritesVM)
-       .environmentObject(IngredientDetailsViewModel())
+        backgroundColor: .constant(.backgroundDark)
+    )
+    .environmentObject(previewDrinksVM)
+    .environmentObject(previewFavoritesVM)
+    .environmentObject(IngredientDetailsViewModel(service: CocktailService()))
 }

@@ -8,29 +8,26 @@
 import SwiftUI
 
 struct SearchFieldView: View {
-
+    
     @Binding var searchText: String
     var onToggleFavorites: (() -> Void)? = nil
-   var isDark: Bool
+    var isDark: Bool
+//    var isOnlyFavorites: Bool? = nil
     
     var body: some View {
-        
-        
         HStack {
             HStack{
                 ZStack(alignment: .leading) {
                     if searchText.isEmpty {
                         Text(isDark ? "Search ingredient..." : "Search drinks...")
                             .foregroundColor(isDark ? .backgroundLight.opacity(0.5) : .backgroundDark.opacity(0.5))
-                            .padding(.leading, 16)
                     }
-
+                    
                     TextField("", text: $searchText)
                         .font(.system(size: 16))
                         .foregroundStyle(isDark ? .backgroundLight : .backgroundDark)
-                        .padding(.horizontal)
                 }
-
+                
                 if !searchText.isEmpty {
                     Button(action:{
                         searchText = ""
@@ -38,43 +35,35 @@ struct SearchFieldView: View {
                         Image(systemName: "xmark.circle.fill")
                             .font(.system(size: 18))
                             .foregroundStyle(isDark ? .backgroundLight : .backgroundDark .opacity(0.7))
-                     
                     }
-                    .padding(.trailing, 10)
+                    .padding(.leading, ThemeSpacing.small)         
                 }
                 
                 Image(systemName: "magnifyingglass")
                     .font(.body)
                     .foregroundStyle(isDark ? .backgroundLight : .backgroundDark)
-                    .padding(.trailing, 6)
-                
+                    .padding(.trailing, ThemeSpacing.medium)
             }
-            .padding(10)
             
-            .padding(.horizontal, 6)
-            
-            Spacer()
-            
-            if let onToggleFavorites = onToggleFavorites {
-                    Button(action: onToggleFavorites) {
-                        Label("Only ", systemImage: "heart.fill")
-                            .labelStyle(.iconOnly)
-                            .foregroundStyle(.backgroundDark .opacity(0.7))
-                        
-                    }
-                    .padding(10)
-                    
-                }
-            
-            
+//            if let isOnlyFavorites = isOnlyFavorites,
+//               let onToggleFavorites = onToggleFavorites {
+//                Button(action: onToggleFavorites) {
+//                    Label("Only ", systemImage: isOnlyFavorites ? "heart.fill" : "heart")
+//                        .labelStyle(.iconOnly)
+//                        .foregroundStyle(.backgroundDark .opacity(0.7))
+//                }
+//                .padding(.trailing, ThemeSpacing.small)
+//            }
         }
+        .padding(.vertical, ThemeSpacing.small)
+        .padding(.leading, ThemeSpacing.small)
         .background(
-            RoundedRectangle(cornerRadius: 12)
+            RoundedRectangle(cornerRadius: ThemeSpacing.cornerRadiusSmall)
                 .fill(.ultraThinMaterial.opacity(0.5))
         )
         .overlay(
-            RoundedRectangle(cornerRadius: 12)
-                .stroke(isDark ? .backgroundLight.opacity(0.2) : .backgroundDark.opacity(0.2), lineWidth: 1)
+            RoundedRectangle(cornerRadius: ThemeSpacing.cornerRadiusSmall)
+                .stroke(isDark ? .backgroundLight.opacity(0.2) : .backgroundDark.opacity(0.2), lineWidth: ThemeSize.borderLineWidth)
         )
     }
 }
@@ -82,5 +71,5 @@ struct SearchFieldView: View {
 
 #Preview {
     SearchFieldView(searchText: .constant(""), onToggleFavorites: {}, isDark: true)
-
+    
 }

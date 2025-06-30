@@ -10,56 +10,42 @@
 import SwiftUI
 
 struct DrinkOfTheDayBannerView: View {
-        @EnvironmentObject var drinksViewModel: DrinksViewModel
-
+    @EnvironmentObject var drinksViewModel: DrinksViewModel
+    
     var body: some View {
         VStack(alignment: .center){
-                       if let randomDrink = drinksViewModel.randomDrink {
-       
-                           Text("Drink of the Day")
-                               .font(ThemeFont.sectionLabel)
-                               .textCase(.uppercase)
-                                  .kerning(1)
-                               .foregroundStyle(.backgroundDark)
-                               .padding(.top, 24)
-       
-                           Text(randomDrink.name)
-                               .font(ThemeFont.drinkTitle)
-                               
-                               .foregroundStyle(.backgroundDark)
-                               .padding(.top, 6)
-       
-       
-                           AsyncImage(url: URL(string: randomDrink.thumbnail)) {  phase in
-                               if let image = phase.image {
-                                   image
-                                       .resizable()
-                                          .scaledToFit()
-                                          .frame(maxWidth: 280) 
-                                          .cornerRadius(10)
-
-       
-                               } else if phase.error != nil {
-                                   Text("No image available")
-                               } else {
-                                   Image(systemName: "photo")
-                               }
-                           }
-                           .id(randomDrink.id)
-                           .shadow(radius: 3)
-                           .padding(.horizontal)
-       
-                       }
-
-               }
-               .onAppear() {
-                   Task {
-                       if drinksViewModel.randomDrink == nil {
-                           
-                           await drinksViewModel.loadRandomDrink()
-                       }
-                   }
-               }
+            if let randomDrink = drinksViewModel.randomDrink {
+                
+                Text(randomDrink.name)
+                    .font(ThemeFont.drinkTitle)
+                    .foregroundStyle(.backgroundDark)
+                    .opacity(0.85)
+                
+                AsyncImage(url: URL(string: randomDrink.thumbnail)) {  phase in
+                    if let image = phase.image {
+                        image
+                            .resizable()
+                            .scaledToFit()
+                            .frame(maxWidth: ThemeSize.drinkBannerMaxWidth)
+                            .cornerRadius(ThemeSpacing.cornerRadiusSmall)
+                            .shadow(radius: ThemeSpacing.shadowRadius/2)
+                        
+                    } else if phase.error != nil {
+                        Text("No image available")
+                    } else {
+                        ProgressView()
+                    }
+                }
+                .id(randomDrink.id)
+            }
+        }
+        .onAppear() {
+            Task {
+                if drinksViewModel.randomDrink == nil {
+                    await drinksViewModel.loadRandomDrink()
+                }
+            }
+        }
     }
 }
 

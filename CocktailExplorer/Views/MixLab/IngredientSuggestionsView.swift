@@ -13,24 +13,33 @@ struct IngredientSuggestionsView: View {
 
     var body: some View {
         if !viewModel.filteredIngredients.isEmpty {
-            VStack(alignment: .leading, spacing: 8) {
+            VStack(alignment: .leading, spacing: ThemeSpacing.elementSpacing) {
                 Text("Suggestions")
-                    .font(ThemeFont.sectionLabel)
-                    .foregroundStyle(.backgroundLight)
-                    .padding(.top, ThemeSpacing.elementSpacing)
-                    .padding(.bottom, ThemeSpacing.elementSpacing)
+                    .font(ThemeFont.sectionHeader)
+                    .foregroundStyle(.backgroundLight.opacity(0.8))
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.horizontal, ThemeSpacing.horizontal)
+                    .padding(.bottom, ThemeSpacing.elementSpacing)
                 
                 ScrollView(.vertical, showsIndicators: true)  {
-                    FlowLayout(items: viewModel.filteredIngredients) { ingredient in
+                    FlowLayout(items: viewModel.filteredIngredients, spacing: ThemeSpacing.compact) { ingredient in
                         IngredientCapsule(selectedIngredientName: $selectedIngredientName, ingredient: ingredient)
                             .environmentObject(viewModel)
                     }
-                    .padding(.horizontal, ThemeSpacing.horizontal/2)
                     .padding(.bottom, ThemeSpacing.elementSpacing)
                 }
-                .frame(maxHeight: 140)
+                .frame(maxHeight: ThemeSize.suggestionsMaxHeight)
+                .mask(
+                  LinearGradient(
+                    gradient: Gradient(stops: [
+                      .init(color: .white, location: 0.0),
+                      .init(color: .white, location: 0.85),
+                      .init(color: .clear, location: 1.0)
+                    ]),
+                    startPoint: .top,
+                    endPoint: .bottom
+                  )
+                )
+
             }
         }
     }
@@ -38,5 +47,5 @@ struct IngredientSuggestionsView: View {
 
 #Preview {
     IngredientSuggestionsView(selectedIngredientName:  .constant(IdentifiableString(id: "Tequila")))
-        .environmentObject(IngredientFilterViewModel())
+        .environmentObject(IngredientFilterViewModel(service: CocktailService()))
 }

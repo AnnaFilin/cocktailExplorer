@@ -10,20 +10,17 @@ import SwiftUI
 struct PeekingMenuCorner: View {
     var body: some View {
         ZStack {
-                  VStack(spacing: 4) {
+            VStack(spacing: ThemeSpacing.none) {
                       Text("·  The Menu  ·")
                           .font(ThemeFont.drinkTitle)
-                          .padding(.top, 6)
                       
                       Text("Refine the random.")
                           .font(ThemeFont.listTitle)
                           .opacity(0.8)
-                             .padding(.bottom, 2)
 
-                      
                       HStack {
                           
-                      VStack(spacing: 4) {
+                      VStack(spacing: ThemeSpacing.compact) { //spacing: 4
                              lineDecoration
                              lineDecoration
                          }
@@ -31,35 +28,35 @@ struct PeekingMenuCorner: View {
                               .renderingMode(.template)
                               .resizable()
                               .scaledToFit()
-                              .frame(width: 40, height: 40)
-                              .foregroundColor(.backgroundDark)
-
+                              .frame(width: ThemeSize.iconSizeMedium, height: ThemeSize.iconSizeMedium)
                       }
-
+                      .padding(.top, -ThemeSpacing.compact)
                   }
-                  .padding(.horizontal, 20)
-                  .padding(.vertical, 8)
-                  .background(Color.backgroundLight)
+            .foregroundColor(.backgroundDark)
+                  .padding(.vertical, ThemeSpacing.small)
+                  .padding(.horizontal, ThemeSpacing.horizontal)
+                  .frame(minHeight: ThemeSpacing.sectionTop)
+                  .background(.backgroundLight)
                   .overlay(
-                      RoundedRectangle(cornerRadius: 0)
-                          .stroke(.backgroundDark.opacity(0.7), lineWidth: 1)
+                      RoundedRectangle(cornerRadius: ThemeSpacing.none)
+                        .stroke(.backgroundDark.opacity(0.7), lineWidth: ThemeSize.borderLineWidth)
                   )
                   .overlay(
-                      RoundedRectangle(cornerRadius: 0)
-                          .stroke(.backgroundDark.opacity(0.9), lineWidth: 0.5)
-                          .padding(4)
+                      RoundedRectangle(cornerRadius: ThemeSpacing.none)
+                        .stroke(.backgroundDark.opacity(0.7), lineWidth: ThemeSize.borderLineWidthThin)
+
+                          .padding(ThemeSpacing.compact)
                   )
                   .rotationEffect(.degrees(-14))
-                  .shadow(radius: 2)
-              }
+                  .shadow(radius: ThemeSpacing.shadowRadius)
+        }
     }
     
     var lineDecoration: some View {
         Rectangle()
-            .frame(height: 1)
+            .frame(height: ThemeSize.borderLineWidth)
             .foregroundColor(.secondary)
             .opacity(0.5)
-            .padding(.vertical,0)
     }
 }
 

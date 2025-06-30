@@ -34,19 +34,15 @@ struct DrinkDetailView: View {
                     .transition(.opacity)
                     
                 } else if let currentDrink = drinksViewModel.currentDrink {
-                    
-                    
                     ScrollView {
-                        
-                        VStack(alignment: .center, spacing: 12) {
-                            
+                        VStack(alignment: .center, spacing: ThemeSpacing.elementSpacing) {
                             AsyncImage(url: URL(string: currentDrink.thumbnail)) {  phase in
                                 if let image = phase.image {
                                     image
                                         .resizable()
                                         .aspectRatio(contentMode: .fit)
-                                        .clipShape(RoundedRectangle(cornerRadius: 14)) 
-                                        .shadow(radius: 6)
+                                        .clipShape(RoundedRectangle(cornerRadius: ThemeSpacing.cornerRadiusSmall))
+                                                   .shadow(radius: ThemeSpacing.shadowRadius)
                                     
                                 } else if phase.error != nil {
                                     Text("No image available")
@@ -54,49 +50,42 @@ struct DrinkDetailView: View {
                                     Image(systemName: "photo")
                                 }
                             }
-                            .frame(maxWidth: 300, maxHeight: 240)
-                            .padding(.bottom, 8)
-                            .shadow(radius: 5)
+                            .frame(maxWidth: ThemeSize.drinkBannerMaxWidth)
                             
-                            Spacer()
-                            
-                            VStack(spacing: 6)  {
+                            VStack(spacing: ThemeSpacing.compact)  {
                                 
                                 Text(currentDrink.name)
                                     .font(ThemeFont.drinkTitle)
                                     .multilineTextAlignment(.center)
                                     .foregroundStyle(.backgroundLight)
+                                    .frame(maxWidth: .infinity, alignment: .center)
                                 
                                 Text(currentDrink.category.uppercased())
                                     .font(ThemeFont.sectionLabel)
                                     .foregroundStyle(.backgroundLight.opacity(0.8))
-                                    .padding(.top, 2)
                                     .tracking(1)
                             }
                             
-                            FavoritesButtonView(drinkId: currentDrink.id )
-                                .font(.system(size: 26, weight: .medium))
+                            FavoritesButtonView(drinkId: currentDrink.id)
+                                .font(.system(size: ThemeSize.iconSizeFavorite, weight: .medium))
                                 .foregroundStyle(.accentRed)
+
                         }
-                        .padding(.top, 12)
+                        .padding(.horizontal, ThemeSpacing.horizontal)
                         
-                        VStack (alignment: .leading, spacing: 0){
+                        VStack (alignment: .leading,  spacing: ThemeSpacing.elementSpacing){
                             Text("Ingridients")
                                 .modifier(SectionHeaderStyle())
                             
-                            VStack(alignment: .leading, spacing: 4) {
+                            VStack(alignment: .leading, spacing: ThemeSpacing.compact) {
                                 ForEach(currentDrink.ingredients, id: \.id) { ingredient in
                                     Text("• \(ingredient.name)")
                                         .modifier(SectionBodyStyle())
                                 }
-                                
                             }
-                            
-                            .padding(.vertical, 16)
-                            
+
                             Text("Instructions")
                                 .modifier(SectionHeaderStyle())
-                                .padding(.top, 12)
                             
                             Text(currentDrink.instructions)
                                 .modifier(SectionBodyStyle())
@@ -105,17 +94,17 @@ struct DrinkDetailView: View {
                                 .lineSpacing(6)
                             
                                 .frame(maxWidth: .infinity, alignment: .leading)
-                                .padding(.vertical, 16)
                             
-                            HStack(spacing: 32) {
+                            HStack(spacing: ThemeSpacing.large) {
                                 VStack(alignment: .leading) {
                                     Text("Glass")
                                         .modifier(SectionHeaderStyle())
                                     
                                     Text(currentDrink.glass)
                                         .modifier(SectionBodyStyle())
-                                    
                                 }
+                                
+                                Spacer()
                                 
                                 VStack(alignment: .leading)  {
                                     Text("Category")
@@ -125,23 +114,21 @@ struct DrinkDetailView: View {
                                         .modifier(SectionBodyStyle())
                                     
                                 }
-                                .padding(.leading)
+                                Spacer()
                             }
-                            .padding(.vertical)
                             
                         }
-                        .padding()
+                        .padding(.horizontal, ThemeSpacing.horizontal)
+                        .padding(.top, ThemeSpacing.elementSpacing)
                         .frame(maxWidth: .infinity, alignment: .leading)
                     }
                     .transition(.opacity)
                 } else if let error = drinksViewModel.currentErrorMessage {
                     VStack {
-                        Spacer()
                         Text(error)
                             .foregroundColor(.red)
                             .multilineTextAlignment(.center)
-                            .padding()
-                        Spacer()
+
                     }
                 }
             }
@@ -176,7 +163,7 @@ struct DrinkDetailView: View {
 struct SectionHeaderStyle: ViewModifier {
     func body(content: Content) -> some View {
         content
-            .font(.system(size: 14, weight: .semibold))
+            .font(ThemeFont.sectionHeader)
             .foregroundStyle(.backgroundLight)
             .textCase(.uppercase)
     }
@@ -185,7 +172,7 @@ struct SectionHeaderStyle: ViewModifier {
 struct SectionBodyStyle: ViewModifier {
     func body(content: Content) -> some View {
         content
-            .font(.body)
+            .font(ThemeFont.captionRegular)
             .foregroundStyle(.textPrimary)
     }
 }

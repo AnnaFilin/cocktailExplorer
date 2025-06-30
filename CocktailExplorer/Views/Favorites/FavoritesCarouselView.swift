@@ -22,26 +22,20 @@ struct FavoritesCarouselView: View {
     
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 16) {
-                
+            HStack() {
                 ForEach(filteredDrinks, id: \.self) { drink in
                     NavigationLink(value: drink.id) {
-//                        DrinkLargeCardView(drink: drink)
-//                            .cornerRadius(16)
-//                            .shadow(radius: 5)
-                        
-                        DrinkCardView(drink: drink)
+                        DrinkCardView(drink: drink, width: ThemeSize.drinkCardWidth, height: ThemeSize.drinkCardHeight)
+                            .frame(width: ThemeSize.drinkCardWidth, height: ThemeSize.drinkCardHeight)
                     }
                 }
             }
         }
-        .padding(.horizontal)
-        .padding(.vertical, 8)
     }
     
 }
 
 #Preview {
     FavoritesCarouselView()
-        .environmentObject(FavoriteDrinksViewModel())
+        .environmentObject(FavoriteDrinksViewModel(service: CocktailService()))
 }

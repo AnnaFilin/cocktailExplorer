@@ -14,35 +14,37 @@ struct DrinksGalleryView: View {
     
     var body: some View {
         NavigationStack {
-            ZStack {
-                backgroundColor.ignoresSafeArea()
+            BaseView(backgroundColor: backgroundColor) {
                 
+                SectionHeaderView(title: "Drink of the Day",subtitle: nil, alignment: .center)
+            .padding(.top, ThemeSpacing.sectionTop)
+
                 VStack{
                     
                     DrinkOfTheDayBannerView()
-                        .padding(.top, ThemeSpacing.sectionTop)
                     
                     SearchFieldView(
                         searchText: $drinksViewModel.searchText,
-                        onToggleFavorites: {
-                            drinksViewModel.showOnlyFavorites.toggle()
-                        }, isDark: false
+//                        onToggleFavorites: {
+//                            drinksViewModel.showOnlyFavorites.toggle()
+//                        },
+                        isDark: false
+//                        isOnlyFavorites: drinksViewModel.showOnlyFavorites
                     )
-                    .padding(.horizontal)
-                    
+                    .padding(.top, ThemeSpacing.elementSpacing)
+                    .padding(.bottom, ThemeSpacing.elementSpacing)
+       
                     DrinkListContainerView(
                         drinks: drinksViewModel.filteredDrinks,
                         title: nil,
                         emptyMessage: "No drinks found",
                         isDarkBackground: false,
                         isLoading: drinksViewModel.isLoading,
-                        errorMessage: drinksViewModel.allDrinksErrorMessage
+                        errorMessage: drinksViewModel.allDrinksErrorMessage,
+                        showEmptyMessage: true 
                     )
                     .environmentObject(drinksViewModel)
-                    .padding(.horizontal)
-                }
-                
-                
+                }   
             }
             .navigationDestination(for: String.self) { id in
                 DrinkDetailView(drinkId: id, backgroundColor: $backgroundColor)

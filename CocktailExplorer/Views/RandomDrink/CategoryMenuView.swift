@@ -15,20 +15,17 @@ struct CategoryMenuView: View {
     
     var body: some View {
 
-            VStack (spacing: 8){
+            VStack (spacing:ThemeSpacing.none){
                 Text("·  The Menu  ·")
                     .font(ThemeFont.drinkTitle)
-                    .padding(.top, 8)
+                    .padding(.top, ThemeSpacing.small)
                 
                 Text("Refine the random.")
                     .font(ThemeFont.listTitle)
-                    .opacity(0.8)
-                       .padding(.bottom, 2)
 
-                
                 HStack {
                     
-                VStack(spacing: 4) {
+                VStack(spacing: ThemeSpacing.compact) {
                        lineDecoration
                        lineDecoration
                    }
@@ -36,9 +33,10 @@ struct CategoryMenuView: View {
                         .renderingMode(.template)
                         .resizable()
                         .scaledToFit()
-                        .frame(width: 30, height: 30)
+
+                        .frame(width: ThemeSize.iconSizeSmall, height: ThemeSize.iconSizeSmall)
                         .foregroundColor(.backgroundDark)
-                    VStack(spacing: 4) {
+                    VStack(spacing: ThemeSpacing.compact ) {
                            lineDecoration
                            lineDecoration
                        }
@@ -49,42 +47,36 @@ struct CategoryMenuView: View {
                         .onTapGesture {
                             selectedCategory = categorie
                             onSelect?()
-                        }
-                      
+                        }      
                 }
-                .background(
-                       RoundedRectangle(cornerRadius: 4)
-                           .fill(Color.backgroundLight)
-                           .shadow(color: .backgroundDark.opacity(0.1), radius: 1, x: 1, y: 2)
-                   )
-                
             }
-            .padding(.bottom, 12)
-            .padding(.horizontal, 24)
+            .opacity(0.8)
+            .padding(.bottom, ThemeSpacing.medium)
+            .padding(.horizontal, ThemeSpacing.horizontal)
             .foregroundStyle(.backgroundDark)
             .overlay(
-                RoundedRectangle(cornerRadius: 0)
-                    .stroke(.backgroundDark.opacity(0.7), lineWidth: 1)
+                RoundedRectangle(cornerRadius: ThemeSpacing.none)
+                    .stroke(.backgroundDark.opacity(0.6), lineWidth: ThemeSize.borderLineWidth)
             )
-            .padding(6)
+            .padding(ThemeSpacing.small)
             .overlay(
-                RoundedRectangle(cornerRadius: 0)
-                    .stroke(.backgroundDark.opacity(0.9), lineWidth: 0.5)
+                RoundedRectangle(cornerRadius: ThemeSpacing.none)
+                    .stroke(.backgroundDark.opacity(0.9), lineWidth:  ThemeSize.borderLineWidthThin)
             )
-            .padding(6)
+            .padding(ThemeSpacing.small)
             .background(.backgroundLight)
             .overlay(
-                RoundedRectangle(cornerRadius: 0)
-                    .stroke(.clear, lineWidth: 0.5)
+                RoundedRectangle(cornerRadius: ThemeSpacing.none)
+                    .stroke(.clear, lineWidth: ThemeSize.borderLineWidthThin)
             )
     }
     
     var lineDecoration: some View {
         Rectangle()
-            .frame(height: 1)
-            .foregroundColor(.secondary)
+            .frame(height: ThemeSize.borderLineWidth)
+            .foregroundColor(.backgroundDark)
             .opacity(0.5)
-            .padding(.vertical,0)
+            .padding(.vertical,ThemeSpacing.none)
     }
     
 }
@@ -95,18 +87,30 @@ struct CategoryDotLine: View {
     var body: some View {
         ZStack {
             DottedLine()
-                .stroke(style: StrokeStyle(lineWidth: 1, dash: [2, 4]))
-                .foregroundColor(.gray.opacity(0.5))
-                .frame(height: 1)
+                .stroke(style: StrokeStyle(lineWidth:  ThemeSize.borderLineWidth, dash: [2, 4]))
+                .foregroundColor(.backgroundDark.opacity(0.5))
+                .frame(height:  ThemeSize.borderLineWidth)
                 .padding(.horizontal)
             
             Text(title)
                 .font(ThemeFont.listTitle)
                 .foregroundColor(.backgroundDark)
-                .padding(.horizontal, 8)
+                .padding(.horizontal, ThemeSpacing.small)
                 .background(Color.backgroundLight)
         }
-        .padding(.vertical, 6)
+
+        .padding(.horizontal, ThemeSpacing.small)
+        .padding(.vertical, ThemeSpacing.compact)
+        .background(
+            RoundedRectangle(cornerRadius: ThemeSpacing.compact)
+                   .fill(.backgroundLight.opacity(0.9))
+                   .shadow(color: .black.opacity(0.1), radius: 1, x: 1, y: 2)
+                   .overlay(
+                        RoundedRectangle(cornerRadius: ThemeSpacing.compact)
+                          .stroke(.backgroundDark.opacity(0.1), lineWidth: ThemeSize.borderLineWidthThin)
+                      )
+           )
+        
     }
 }
 
@@ -118,35 +122,6 @@ struct DottedLine: Shape {
         return path
     }
 }
-
-
-struct CategoryLine: View {
-    let title: String
-    
-    var body: some View {
-        HStack(spacing: 6) {
-            lineDecoration
-            
-            Text(title)
-                .font(ThemeFont.listTitle)
-                .foregroundColor(.backgroundDark)
-                .lineLimit(1)
-                .layoutPriority(1)
-
-            lineDecoration
-        }
-        .frame(maxWidth: .infinity)
-        .padding(.vertical, 4)
-    }
-    
-    var lineDecoration: some View {
-        Rectangle()
-            .frame(height: 1)
-            .foregroundColor(.secondary)
-            .opacity(0.5)
-    }
-}
-
 
 
 #Preview {

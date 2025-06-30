@@ -10,17 +10,14 @@ import SwiftUI
 struct SelectedIngredientsView: View {
     @EnvironmentObject var viewModel: IngredientFilterViewModel
     @Binding var selectedIngredientName: IdentifiableString?
-
+    
     var body: some View {
         if !viewModel.selectedIngredients.isEmpty {
             Text("Selected Ingredients")
-                .font(ThemeFont.sectionLabel)
-                .foregroundStyle(.backgroundLight)
-                .padding(.top, ThemeSpacing.sectionTop)
+                .font(ThemeFont.sectionHeader)
+                .foregroundStyle(.backgroundLight.opacity(0.8))
                 .padding(.bottom, ThemeSpacing.elementSpacing)
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.horizontal, ThemeSpacing.horizontal)
-            
             
             VStack(alignment: .leading){
                 HStack(alignment: .top, spacing: ThemeSpacing.elementSpacing) {
@@ -31,6 +28,7 @@ struct SelectedIngredientsView: View {
                     
                     Text("Reset All")
                         .foregroundColor(.accentRed)
+                        .font(ThemeFont.captionMedium)
                         .padding(.horizontal,ThemeSpacing.elementSpacing)
                         .padding(.vertical,ThemeSpacing.elementSpacing)
                         .background(
@@ -38,21 +36,21 @@ struct SelectedIngredientsView: View {
                                 .fill(Color.backgroundLight.opacity(0.1))
                         )
                         .onTapGesture {
-                            viewModel.searchText = ""
-                            viewModel.selectedIngredients.removeAll()
+                            Task {
+                                await viewModel.resetAll()
+                            }
                         }
                 }
                 .fixedSize(horizontal: false, vertical: true)
-                .padding(.horizontal, ThemeSpacing.horizontal)
                 .padding(.bottom, ThemeSpacing.elementSpacing)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
-
+            
         }
     }
 }
 
 #Preview {
     SelectedIngredientsView(selectedIngredientName:  .constant(IdentifiableString(id: "Tequila")))
-        .environmentObject(IngredientFilterViewModel())
+        .environmentObject(IngredientFilterViewModel(service: CocktailService()))
 }

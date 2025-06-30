@@ -14,7 +14,8 @@ struct DrinkListContainerView: View {
     let isDarkBackground: Bool
     let isLoading: Bool
     let errorMessage: String?
-
+    let showEmptyMessage: Bool
+    
     var body: some View {
         if isLoading {
             ProgressView()
@@ -23,7 +24,6 @@ struct DrinkListContainerView: View {
             Text(errorMessage)
                 .foregroundColor(.red)
                 .multilineTextAlignment(.center)
-                .padding()
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
         } else {
             ScrollView {
@@ -31,9 +31,9 @@ struct DrinkListContainerView: View {
                     drinks: drinks,
                     title: title,
                     emptyMessage: emptyMessage,
-                    isDarkBackground: isDarkBackground
+                    isDarkBackground: isDarkBackground,
+                    showEmptyMessage: showEmptyMessage
                 )
-                .padding(.horizontal)
             }
         }
     }
@@ -46,6 +46,6 @@ struct DrinkListContainerView: View {
     emptyMessage: "No drinks found",
     isDarkBackground: false,
     isLoading: false,
-    errorMessage: nil)
+                            errorMessage: nil, showEmptyMessage: false)
     .environmentObject(DrinksViewModel.preview)
 }

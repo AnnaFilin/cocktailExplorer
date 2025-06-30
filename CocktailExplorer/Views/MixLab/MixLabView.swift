@@ -4,82 +4,87 @@
 //
 //  Created by Anna Filin on 11/06/2025.
 //
-
+// TODO: Show empty state when no ingredients selected
 import SwiftUI
 
 struct IdentifiableString: Identifiable {
     let id: String
 }
 
-
 struct MixLabView: View {
-    @StateObject private var viewModel = IngredientFilterViewModel()
+    @EnvironmentObject var viewModel: IngredientFilterViewModel
     @EnvironmentObject private var ingredientDetailsViewModel: IngredientDetailsViewModel
     @EnvironmentObject var drinksViewModel: DrinksViewModel
     @Binding var backgroundColor: Color
     @State private var selectedIngredientName: IdentifiableString? = nil
     @State var showInitialBlock = true
-//    @State var animatedIn = false
-   
+    @State private var visibleDrinks = false
+    
     var body: some View {
         NavigationStack {
-            
-            
-            ZStack {
-                backgroundColor
-                    .ignoresSafeArea()
+            BaseView(backgroundColor: backgroundColor) {
+                SectionHeaderView(title: "By Composition", subtitle: "What lies beneath the flavor.", alignment: .center)
+                    .padding(.top, ThemeSpacing.sectionTop)
+                
+                SearchFieldView(searchText: $viewModel.searchText, isDark: true)
+                    .environmentObject(viewModel)
+                
                 VStack{
                     if viewModel.isLoading || viewModel.ingredients.isEmpty {
                         VStack {
-                            Spacer()
                             ProgressView("Loading ingredients...")
                                 .progressViewStyle(CircularProgressViewStyle())
-                            Spacer()
                         }
                         .transition(.opacity)
                         
                     } else if  !viewModel.ingredients.isEmpty {
                         
-                        VStack(alignment: .center, spacing: 4) {
-                            MixLabHeaderView()
-                                .environmentObject(viewModel)
-                         
+                        VStack(alignment: .center, spacing: ThemeSpacing.compact) {
+                            
                             if showInitialBlock {
                                 InitialEmptyView()
                             }
                             
                             else {
-                                SelectedIngredientsView(selectedIngredientName: $selectedIngredientName)
+                                if !showInitialBlock {
+                                  SelectedIngredientsView(selectedIngredientName: $selectedIngredientName)
+                                    .padding(.top, ThemeSpacing.elementSpacing)
                                     .transition(.opacity.combined(with: .move(edge: .top)))
+                                    .animation(.easeInOut(duration: 0.6), value: showInitialBlock)
                                     .environmentObject(viewModel)
+                                }
                                 
                                 ScrollView {
-                                    VStack(spacing: 12) {
+                                    VStack(spacing: ThemeSpacing.elementSpacing) {
                                         IngredientSuggestionsView(selectedIngredientName: $selectedIngredientName)
+                                            .padding(.top, ThemeSpacing.elementSpacing)
                                             .environmentObject(viewModel)
                                         
                                         Divider()
                                             .background(.backgroundLight.opacity(0.15))
-                                            .padding(.vertical, ThemeSpacing.compactSpacing)
+                                            .padding(.vertical, ThemeSpacing.compact)
                                         
                                         DrinkListContainerView(
                                             drinks: viewModel.filteredDrinks,
-                                            title: "Matching Cocktails",
+                                            title: viewModel.filteredDrinks.isEmpty ? nil : "Matching Cocktails",
                                             emptyMessage: "No cocktails match your selection.",
                                             isDarkBackground: true,
                                             isLoading: false,
-                                            errorMessage: nil
+                                            errorMessage: nil,
+                                            showEmptyMessage: !viewModel.selectedIngredients.isEmpty
                                         )
+                                        .opacity(visibleDrinks ? 1 : 0)
+                                        .scaleEffect(visibleDrinks ? 1 : 0.97)
+                                        .animation(.easeInOut(duration: 0.7), value: visibleDrinks)
                                         .environmentObject(drinksViewModel)
-
+                                        
                                     }
                                 }
                                 .animation(.easeInOut(duration: 0.3), value: viewModel.filteredIngredients)
                             }
-                            
                         }
                         .frame(maxHeight: .infinity, alignment: .top)
-                        .padding(.horizontal, 16)
+                        .padding(.top, ThemeSpacing.elementSpacing)
                     }
                 }
             }
@@ -105,16 +110,24 @@ struct MixLabView: View {
         }
         .onChange(of: viewModel.filteredIngredients) {
             if !viewModel.filteredIngredients.isEmpty {
-                   withAnimation {
-                       showInitialBlock = false
-                   }
-               }
+                withAnimation(.easeInOut(duration: 0.6)) {
+                    showInitialBlock = false
+                }
+            }
         }
+        .onChange(of: viewModel.filteredDrinks) {
+            withAnimation(.easeInOut(duration: 0.4)) {
+                visibleDrinks = !viewModel.filteredDrinks.isEmpty
+            }
+        }
+        
     }
 }
 
 #Preview {
     MixLabView(backgroundColor: .constant(.backgroundDark))
-        .environmentObject(IngredientFilterViewModel())
+        .environmentObject(IngredientFilterViewModel.preview)
         .environmentObject(DrinksViewModel.preview)
+        .environmentObject(IngredientDetailsViewModel(service: CocktailService()))
 }
+

@@ -8,34 +8,6 @@
 import SwiftUI
 
 
-//struct SectionHeaderView: View {
-//    let title: String
-//    let subtitle: String?
-//    let alignment: Alignment
-//    
-//    var body: some View {
-//        VStack(spacing: ThemeSpacing.elementSpacing) {
-//            Text(title)
-//                .font(ThemeFont.drinkTitle)
-//                .frame(maxWidth: .infinity, alignment: alignment)
-//            
-//            if let subtitle = subtitle {
-//                Text(subtitle)
-//                    .font(ThemeFont.sectionLabel)
-//                    .lineLimit(2)
-//                    .multilineTextAlignment(.center)
-//                    .foregroundStyle(.backgroundLight.opacity(0.8))
-//                    .padding(.horizontal, ThemeSpacing.horizontal)
-//                    .padding(.bottom, 12)
-//                    .frame(maxWidth: .infinity, alignment: alignment)
-//            }
-//        }
-//        .padding(.top, ThemeSpacing.sectionTop)
-//              .padding(.horizontal, ThemeSpacing.horizontal)
-//    }
-//    
-//    
-//}
 struct SectionHeaderView: View {
     let title: String
     let subtitle: String?
@@ -44,12 +16,14 @@ struct SectionHeaderView: View {
     var body: some View {
         VStack(spacing: ThemeSpacing.headerVerticalSpacing) {
             Text(title)
-                .font(ThemeFont.sectionTitle)
+                .font(ThemeFont.screenLabel)
+                .textCase(.uppercase)
+                .kerning(1)
                 .frame(maxWidth: .infinity, alignment: alignment)
             
             if let subtitle = subtitle {
                 Text(subtitle)
-                    .font(ThemeFont.sectionSubtitle)
+                    .font(ThemeFont.screenSubtitle)
                     .lineLimit(2)
                     .multilineTextAlignment(alignment == .leading ? .leading : .center)
                     .foregroundStyle(.backgroundLight.opacity(0.8))
@@ -58,7 +32,7 @@ struct SectionHeaderView: View {
         }
         .padding(.top, ThemeSpacing.sectionTop)
         .padding(.horizontal, ThemeSpacing.horizontal)
-        .padding(.bottom, ThemeSpacing.sectionBottom)
+        .padding(.bottom, ThemeSpacing.medium)
     }
 }
 

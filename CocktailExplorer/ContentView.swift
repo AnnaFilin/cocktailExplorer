@@ -14,19 +14,19 @@ enum Tab {
     case mixBy
 }
 
-
 struct ContentView: View {
-    @StateObject private var favoriteDrinksViewModel = FavoriteDrinksViewModel()
-    @StateObject private var ingredientDetailsViewModel = IngredientDetailsViewModel()
     @EnvironmentObject var drinksViewModel: DrinksViewModel
+    @EnvironmentObject var ingredientFilterViewModel: IngredientFilterViewModel
+    @EnvironmentObject var ingredientDetailsViewModel: IngredientDetailsViewModel
+    @EnvironmentObject var favoriteDrinksViewModel: FavoriteDrinksViewModel
     @State var selectedTab: Tab = .search
     
-
+    
     @State private var backgroundColor: Color = .backgroundLight
-
+    
     
     var body: some View {
-
+        
         ZStack(alignment: .bottom) {
             Group {
                 switch selectedTab {
@@ -37,33 +37,34 @@ struct ContentView: View {
                 case .mixBy:
                     MixLabView(backgroundColor: $backgroundColor)
                         .environmentObject(ingredientDetailsViewModel)
+                        .environmentObject(ingredientFilterViewModel)
                 case .favorites:
                     FavoritesView(backgroundColor: $backgroundColor)
                         .environmentObject(favoriteDrinksViewModel)
                         .environmentObject(ingredientDetailsViewModel)
-                        
                 }
             }
             .environmentObject(drinksViewModel)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-
+            
             TabBarBackgroundView(selectedTab: $selectedTab, backgroundColor: $backgroundColor)
-                .padding(.bottom, 0)
         }
-            .onAppear {
-//                UserDefaults.standard.removeObject(forKey: "FavoriteDrinksDetails")
-
-                Task {
-                    if drinksViewModel.drinks.isEmpty {
-                        
-                        await drinksViewModel.startLoadingDrinks()
-                    }
+        .onAppear {
+            //                UserDefaults.standard.removeObject(forKey: "FavoriteDrinksDetails")
+            Task {
+                if drinksViewModel.drinks.isEmpty {
+                    
+                    await drinksViewModel.startLoadingDrinks()
                 }
             }
         }
+    }
 }
 
 #Preview {
     ContentView()
-        .environmentObject(DrinksViewModel())
+        .environmentObject(DrinksViewModel.preview)
+        .environmentObject(IngredientFilterViewModel.preview)
+        .environmentObject(IngredientDetailsViewModel.preview)
+        .environmentObject(FavoriteDrinksViewModel.preview)
 }

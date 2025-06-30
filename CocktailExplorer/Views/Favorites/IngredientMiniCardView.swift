@@ -16,37 +16,34 @@ struct IngredientMiniCardView: View {
     var body: some View {
         let isSelected = favoritsViewModel.selectedIngredient == ingredientName
 
-        VStack(spacing: 4) {
+        VStack(spacing: ThemeSpacing.small) { //spacing: 4
             AsyncImage(url: URL(string: baseUrl + ingredientName + "-Medium.png")) { phase in
                 if let image = phase.image {
                     image
                         .resizable()
                         .aspectRatio(contentMode: .fit)
-                        .frame(height: 70)
-                        .shadow(color: .black.opacity(0.15), radius: 3, x: 0, y: 2)
-                        .cornerRadius(6)
                 }
             }
   
             Text(ingredientName)
-                .font(ThemeFont.listSubtitle)
+                .font(ThemeFont.smallRegular)
                 .multilineTextAlignment(.center)
                 .lineLimit(2)
                 .minimumScaleFactor(0.7)
-                .frame(width: 90, height: 34)
-                .padding(.horizontal, 4)
                 .foregroundStyle(.backgroundLight.opacity(0.95))
-                .cornerRadius(12)
         }
-        .padding(.top, 6)
-        .frame(width: 100, height: 120)
+        .padding(.top, ThemeSpacing.small)
+        .padding(.bottom, ThemeSpacing.small)
+        .padding(.horizontal, ThemeSpacing.small)
+        .frame(width: ThemeSize.ingredientCardWidth, height: ThemeSize.ingredientCardHeight)
+
         .background(.ultraThinMaterial.opacity(0.1))
-        .cornerRadius(12)
+        .cornerRadius(ThemeSpacing.cornerRadiusSmall)
         .overlay(
-            RoundedRectangle(cornerRadius: 12)
+            RoundedRectangle(cornerRadius:ThemeSpacing.cornerRadiusSmall)
                 .stroke(isSelected ? Color.accentRed : Color.white.opacity(0.08), lineWidth: 1)
         )
-        .shadow(radius: 4)
+        .shadow(radius: ThemeSpacing.shadowRadius)
         .onTapGesture {
             if favoritsViewModel.selectedIngredient == ingredientName {
                 favoritsViewModel.selectedIngredient = nil
@@ -60,7 +57,6 @@ struct IngredientMiniCardView: View {
                     selectedIngredientName = IdentifiableString(id: ingredientName)
                 }
         )
-
     }
 }
 
@@ -69,5 +65,5 @@ struct IngredientMiniCardView: View {
         selectedIngredientName: .constant(IdentifiableString(id: "Tequila")),
         ingredientName: "Southern Comfort"
     )
-    .environmentObject(FavoriteDrinksViewModel())
+    .environmentObject(FavoriteDrinksViewModel(service: CocktailService()))
 }

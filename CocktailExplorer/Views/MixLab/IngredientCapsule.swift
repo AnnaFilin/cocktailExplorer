@@ -9,13 +9,12 @@ import SwiftUI
 
 struct IngredientCapsule: View {
     @EnvironmentObject var ingredientViewModel: IngredientFilterViewModel
-//    @EnvironmentObject var ingredientDetailsViewModel: IngredientDetailsViewModel
     @Binding var selectedIngredientName: IdentifiableString?
 
     let ingredient: BasicIngredient
     
     var backgroundColor: Color {
-        return ingredientViewModel.selectedIngredients.contains(ingredient) ? .accentRed : .clear
+        return ingredientViewModel.selectedIngredients.contains(ingredient) ? .accentRed.opacity(0.85) : .clear
     }
     
     var textColor: Color {
@@ -23,7 +22,7 @@ struct IngredientCapsule: View {
     }
     
     var borderColor: Color {
-        return ingredientViewModel.selectedIngredients.contains(ingredient) ? Color.white.opacity(0.3) : .accentRed
+        return ingredientViewModel.selectedIngredients.contains(ingredient) ? Color.white.opacity(0.8) : .accentRed
     }
     
     var isSelected: Bool {
@@ -34,7 +33,6 @@ struct IngredientCapsule: View {
         ZStack {
             Button(action: {
                 Task {
-                    
                     await ingredientViewModel.toggleIngredient(ingredient)
                 }
                 
@@ -42,15 +40,15 @@ struct IngredientCapsule: View {
                 Text(ingredient.name)
                     .font(ThemeFont.listSubtitle)
                     .fontWeight(.medium)
-                    .padding(.horizontal,ThemeSpacing.elementSpacing)
-                    .padding(.vertical,ThemeSpacing.elementSpacing)
+                    .padding(.horizontal, ThemeSpacing.elementSpacing * 0.75)
+                    .padding(.vertical, ThemeSpacing.elementSpacing)
                     .background(backgroundColor)
                     .foregroundColor(textColor)
                     .lineLimit(1)
-                    .minimumScaleFactor(1.08)
+                    .minimumScaleFactor(0.85)
                     .overlay(
                         Capsule()
-                            .strokeBorder(borderColor, lineWidth: isSelected ? 0 : 1.5)
+                            .strokeBorder(borderColor, lineWidth: isSelected ? 0 : ThemeSize.chipBorderWidth)
                     )
                     .clipShape(Capsule())
                     .scaleEffect(isSelected ? 1.05 : 1.0)
@@ -70,6 +68,5 @@ struct IngredientCapsule: View {
 
 #Preview {
     IngredientCapsule(selectedIngredientName:  .constant(IdentifiableString(id: "Tequila")), ingredient: .example)
-        .environmentObject(IngredientFilterViewModel())
-//        .environmentObject(IngredientDetailsViewModel())
+        .environmentObject(IngredientFilterViewModel(service: CocktailService()))
 }

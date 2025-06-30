@@ -12,22 +12,22 @@ struct DrinkListSectionView: View {
     let title: String?
     let emptyMessage: String
     var isDarkBackground: Bool = false
+    let showEmptyMessage: Bool
     
     var body: some View {
-        if drinks.isEmpty {
+        if drinks.isEmpty  && showEmptyMessage{
             Text(emptyMessage)
                 .font(ThemeFont.sectionLabel)
                 .foregroundStyle(isDarkBackground ? .backgroundLight.opacity(0.8) : .backgroundDark.opacity(0.8))
                 .frame(maxWidth: .infinity, alignment: .center)
-                .padding(.top, 20)
         } else {
-            VStack(spacing: 12) {
+            VStack(spacing: ThemeSpacing.elementSpacing) {
                 if let title = title {
                     Text(title)
-                        .font(ThemeFont.sectionLabel)
+                        .font(ThemeFont.sectionHeader)
                         .foregroundStyle(isDarkBackground ? .backgroundLight : .backgroundDark)
+                        .opacity(0.8)
                         .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(.horizontal, ThemeSpacing.horizontal)
                 }
 
                 ForEach(drinks, id: \.self) { drink in
@@ -36,7 +36,8 @@ struct DrinkListSectionView: View {
                     }
                 }
             }
-            .padding(.bottom, 32)
+            .padding(.bottom, ThemeSpacing.sectionBottom)
+
         }
     }
 }
@@ -46,5 +47,6 @@ struct DrinkListSectionView: View {
     DrinkListSectionView( drinks: [.example, .example],
     title: "Sample Cocktails",
     emptyMessage: "No drinks available",
-    isDarkBackground: false)
+                          isDarkBackground: false, showEmptyMessage: false)
+    .environmentObject(DrinksViewModel.preview)
 }
